@@ -1,5 +1,19 @@
-{
-  "schema_version": "1.0",
-  "generated_at": "1970-01-01T00:00:00Z",
-  "items": []
+﻿{
+    "schema_version":  "1.0",
+    "generated_at":  "2026-01-10T11:56:21Z",
+    "items":  [
+                  {
+                      "id":  "QQ图片20260110183151",
+                      "title":  "QQ图片20260110183151",
+                      "category":  "",
+                      "preview_url":  "https://cdn.jsdelivr.net/gh/821733497/wallpaper-cdn@main/wallpapers/preview/QQ图片20260110183151.png",
+                      "full_url":  "https://cdn.jsdelivr.net/gh/821733497/wallpaper-cdn@main/wallpapers/full/QQ图片20260110183151.png",
+                      "size_bytes":  231120,
+                      "hash_sha256":  "08d89962dc9318f708036baa2c3b1f1ec51dafaa98978bcdf8261c8729c4bde8",
+                      "width":  1280,
+                      "height":  480,
+                      "updated_at":  "2026-01-10T10:31:51Z",
+                      "preview_missing":  false
+                  }
+              ]
 }
