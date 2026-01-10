@@ -1,0 +1,17 @@
+# 工具说明
+
+`generate-index.ps1` 用于扫描 `wallpapers/full/` 和 `wallpapers/preview/`，生成 `index.json`。
+
+参数说明：
+- Owner: GitHub 用户或组织名
+- Repo: 仓库名
+- Branch: 分支名，默认 `main`
+- UseJsdelivr: 使用 jsDelivr 直链（不传则默认使用占位地址）
+- PreviewMaxWidth: 预览图最大宽度，默认 800
+- PreviewMaxHeight: 预览图最大高度，默认 800
+- PreviewFormat: 预览图格式，默认 png
+- ForcePreview: 强制覆盖已存在的预览图（默认开启）
+
+说明：
+- 预览图建议与原图同名，脚本会标记缺失的预览图。
+- 如果未提供 Owner/Repo，URL 会保留占位符，方便后续替换。
