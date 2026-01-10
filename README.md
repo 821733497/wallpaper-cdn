@@ -34,6 +34,7 @@
 1. 上传新图片到 `wallpapers/full/` 和 `wallpapers/preview/`
 2. 运行 `tools/generate-index.ps1` 生成/更新 `index.json`
 3. 推送到 GitHub，App 端按直链访问
+4. 若使用 jsDelivr，可在脚本中加 `-PurgeJsdelivr` 刷新缓存
 
 只上传原图也可以：
 - 脚本会在 `wallpapers/preview/` 缺少同名文件时自动生成预览图

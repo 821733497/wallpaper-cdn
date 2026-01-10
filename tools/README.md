@@ -7,6 +7,7 @@
 - Repo: 仓库名
 - Branch: 分支名，默认 `main`
 - UseJsdelivr: 使用 jsDelivr 直链（不传则默认使用占位地址）
+- PurgeJsdelivr: 生成后刷新 jsDelivr 缓存（需同时使用 `UseJsdelivr`）
 - PreviewMaxWidth: 预览图最大宽度，默认 800
 - PreviewMaxHeight: 预览图最大高度，默认 800
 - PreviewFormat: 预览图格式，默认 png

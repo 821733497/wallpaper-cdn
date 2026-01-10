@@ -3,6 +3,7 @@ param(
   [string]$Repo,
   [string]$Branch = "main",
   [switch]$UseJsdelivr,
+  [switch]$PurgeJsdelivr,
   [int]$PreviewMaxWidth = 800,
   [int]$PreviewMaxHeight = 800,
   [string]$PreviewFormat = "png",
@@ -148,3 +149,13 @@ $json = $output | ConvertTo-Json -Depth 5
 $json | Set-Content -Path $indexPath -Encoding utf8
 
 Write-Host "Generated index.json with $($items.Count) items."
+
+if ($UseJsdelivr -and $PurgeJsdelivr -and -not [string]::IsNullOrWhiteSpace($Owner) -and -not [string]::IsNullOrWhiteSpace($Repo)) {
+  $purgeUrl = "https://purge.jsdelivr.net/gh/$Owner/$Repo@$Branch/index.json"
+  try {
+    Invoke-WebRequest -Uri $purgeUrl -Method Get -UseBasicParsing | Out-Null
+    Write-Host "Purged jsDelivr cache: $purgeUrl"
+  } catch {
+    Write-Host "Failed to purge jsDelivr cache: $purgeUrl"
+  }
+}
