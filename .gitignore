@@ -1,3 +1,69 @@
 *.tmp
 *.log
 tools/*.cache
+# Built application files
+*.apk
+*.ap_
+*.aab
+*.aar
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated build files
+bin/
+gen/
+out/
+
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Log Files
+*.log
+*.log.*
+
+# Android Studio
+*.iml
+.idea/
+.navigation/
+captures/
+output.json
+.cxx/
+
+# Build directories
+app/build/
+app/release/
+app/debug/
+
+# Keystore files
+*.jks
+*.keystore
+*.key
+
+# OS-specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~.nib
+
+# AI/Agent 本地配置（不提交到仓库）
+.claude/
+.serena/
+.mcp.json
+
