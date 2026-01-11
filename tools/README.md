@@ -20,3 +20,7 @@
 - 如果未提供 Owner/Repo，URL 会保留占位符，方便后续替换。
 - 分开生成清单示例：将 `ContentDir` 指向不同目录，并用 `OutputPath` 指定不同的清单文件名。
 - 脚本会对 URL 中的路径进行编码，避免中文或空格导致直链失效。
+
+独立生成预览图：
+- 使用 `tools/generate-previews.ps1` 仅生成预览图，不生成清单。
+- 支持分批处理：`BatchSize` 每批数量，`BatchIndex` 从 0 开始。
