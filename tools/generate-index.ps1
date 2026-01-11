@@ -10,7 +10,8 @@ param(
   [int]$PreviewMaxWidth = 800,
   [int]$PreviewMaxHeight = 800,
   [string]$PreviewFormat = "png",
-  [switch]$ForcePreview = $true
+  [switch]$ForcePreview,
+  [switch]$SkipPreview
 )
 
 Set-StrictMode -Version Latest
@@ -94,6 +95,12 @@ function New-PreviewImage {
   }
 }
 
+function Encode-UrlPath([string]$Path) {
+  $segments = $Path -split "/"
+  $encoded = $segments | ForEach-Object { [System.Uri]::EscapeDataString($_) }
+  return ($encoded -join "/")
+}
+
 function Get-BaseUrl {
   param([string]$Owner, [string]$Repo, [string]$Branch, [switch]$UseJsdelivr, [string]$JsdelivrHost)
   if ([string]::IsNullOrWhiteSpace($Owner) -or [string]::IsNullOrWhiteSpace($Repo)) {
@@ -117,9 +124,13 @@ foreach ($file in $files) {
   $previewPath = Join-Path $previewDir $previewFileName
   $previewExists = Test-Path $previewPath
 
-  if (-not $previewExists -or $ForcePreview) {
-    New-PreviewImage -SourcePath $file.FullName -DestPath $previewPath -MaxWidth $PreviewMaxWidth -MaxHeight $PreviewMaxHeight -Format $PreviewFormat
-    $previewExists = $true
+  if (-not $SkipPreview -and (-not $previewExists -or $ForcePreview)) {
+    try {
+      New-PreviewImage -SourcePath $file.FullName -DestPath $previewPath -MaxWidth $PreviewMaxWidth -MaxHeight $PreviewMaxHeight -Format $PreviewFormat
+      $previewExists = $true
+    } catch {
+      Write-Host "Preview failed: $($file.Name) - $($_.Exception.Message)"
+    }
   }
 
   $size = $file.Length
@@ -131,8 +142,8 @@ foreach ($file in $files) {
     id = $id
     title = $id
     category = ""
-    preview_url = ($baseUrl + $ContentDir + "/preview/" + $previewFileName)
-    full_url = ($baseUrl + $ContentDir + "/full/" + $file.Name)
+    preview_url = (Encode-UrlPath ($baseUrl + $ContentDir + "/preview/" + $previewFileName))
+    full_url = (Encode-UrlPath ($baseUrl + $ContentDir + "/full/" + $file.Name))
     size_bytes = $size
     hash_sha256 = $hash
     width = $dims.width

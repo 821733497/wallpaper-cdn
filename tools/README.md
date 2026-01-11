@@ -12,9 +12,11 @@
 - PreviewMaxWidth: 预览图最大宽度，默认 800
 - PreviewMaxHeight: 预览图最大高度，默认 800
 - PreviewFormat: 预览图格式，默认 png
-- ForcePreview: 强制覆盖已存在的预览图（默认开启）
+- ForcePreview: 强制覆盖已存在的预览图（默认关闭）
+- SkipPreview: 跳过预览图生成，仅生成清单
 
 说明：
 - 预览图建议与原图同名，脚本会标记缺失的预览图。
 - 如果未提供 Owner/Repo，URL 会保留占位符，方便后续替换。
 - 分开生成清单示例：将 `ContentDir` 指向不同目录，并用 `OutputPath` 指定不同的清单文件名。
+- 脚本会对 URL 中的路径进行编码，避免中文或空格导致直链失效。
