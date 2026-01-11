@@ -44,7 +44,7 @@
 
 更新流程（在线壁纸）：
 1. 上传新图片到 `wallpapers-online/full/` 和 `wallpapers-online/preview/`
-2. 运行 `tools/generate-index.ps1 -ContentDir wallpapers-online -OutputPath index-online.json`
+2. 运行 `tools/generate-index.ps1 -ContentDir wallpapers-online -Output index-online.json`
 3. 推送到 GitHub，App 端按直链访问
 
 只上传原图也可以：
