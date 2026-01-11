@@ -3,6 +3,9 @@ param(
   [string]$Repo,
   [string]$Branch = "main",
   [switch]$UseJsdelivr,
+  [string]$JsdelivrHost = "cdn.jsdelivr.net",
+  [string]$ContentDir = "wallpapers",
+  [string]$OutputPath = "index.json",
   [switch]$PurgeJsdelivr,
   [int]$PreviewMaxWidth = 800,
   [int]$PreviewMaxHeight = 800,
@@ -14,9 +17,9 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 $root = Resolve-Path (Join-Path $PSScriptRoot "..")
-$fullDir = Join-Path $root "wallpapers/full"
-$previewDir = Join-Path $root "wallpapers/preview"
-$indexPath = Join-Path $root "index.json"
+$fullDir = Join-Path $root (Join-Path $ContentDir "full")
+$previewDir = Join-Path $root (Join-Path $ContentDir "preview")
+$indexPath = Join-Path $root $OutputPath
 
 if (-not (Test-Path $fullDir)) { throw "Missing directory: $fullDir" }
 if (-not (Test-Path $previewDir)) { throw "Missing directory: $previewDir" }
@@ -92,17 +95,17 @@ function New-PreviewImage {
 }
 
 function Get-BaseUrl {
-  param([string]$Owner, [string]$Repo, [string]$Branch, [switch]$UseJsdelivr)
+  param([string]$Owner, [string]$Repo, [string]$Branch, [switch]$UseJsdelivr, [string]$JsdelivrHost)
   if ([string]::IsNullOrWhiteSpace($Owner) -or [string]::IsNullOrWhiteSpace($Repo)) {
     return "https://cdn.jsdelivr.net/gh/<owner>/<repo>@$Branch/"
   }
   if ($UseJsdelivr) {
-    return "https://cdn.jsdelivr.net/gh/$Owner/$Repo@$Branch/"
+    return "https://$JsdelivrHost/gh/$Owner/$Repo@$Branch/"
   }
   return "https://raw.githubusercontent.com/$Owner/$Repo/$Branch/"
 }
 
-$baseUrl = Get-BaseUrl -Owner $Owner -Repo $Repo -Branch $Branch -UseJsdelivr:$UseJsdelivr
+$baseUrl = Get-BaseUrl -Owner $Owner -Repo $Repo -Branch $Branch -UseJsdelivr:$UseJsdelivr -JsdelivrHost $JsdelivrHost
 
 $files = Get-ChildItem -Path $fullDir -File | Sort-Object Name
 $items = @()
@@ -128,8 +131,8 @@ foreach ($file in $files) {
     id = $id
     title = $id
     category = ""
-    preview_url = ($baseUrl + "wallpapers/preview/" + $previewFileName)
-    full_url = ($baseUrl + "wallpapers/full/" + $file.Name)
+    preview_url = ($baseUrl + $ContentDir + "/preview/" + $previewFileName)
+    full_url = ($baseUrl + $ContentDir + "/full/" + $file.Name)
     size_bytes = $size
     hash_sha256 = $hash
     width = $dims.width
@@ -139,19 +142,24 @@ foreach ($file in $files) {
   }
 }
 
-$output = [ordered]@{
+$manifest = [ordered]@{
   schema_version = "1.0"
   generated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
   items = $items
 }
 
-$json = $output | ConvertTo-Json -Depth 5
+$json = $manifest | ConvertTo-Json -Depth 5
 $json | Set-Content -Path $indexPath -Encoding utf8
 
 Write-Host "Generated index.json with $($items.Count) items."
 
 if ($UseJsdelivr -and $PurgeJsdelivr -and -not [string]::IsNullOrWhiteSpace($Owner) -and -not [string]::IsNullOrWhiteSpace($Repo)) {
-  $purgeUrl = "https://purge.jsdelivr.net/gh/$Owner/$Repo@$Branch/index.json"
+  $purgePath = $OutputPath
+  if ([System.IO.Path]::IsPathRooted($OutputPath)) {
+    $purgePath = $indexPath.Substring($root.Path.Length).TrimStart("\", "/")
+  }
+  $purgePath = $purgePath -replace "\\", "/"
+  $purgeUrl = "https://purge.jsdelivr.net/gh/$Owner/$Repo@$Branch/$purgePath"
   try {
     Invoke-WebRequest -Uri $purgeUrl -Method Get -UseBasicParsing | Out-Null
     Write-Host "Purged jsDelivr cache: $purgeUrl"

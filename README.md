@@ -5,7 +5,10 @@
 目录结构：
 - wallpapers/full/ 原图（约 2MB）
 - wallpapers/preview/ 预览图（50~150KB）
-- index.json 壁纸清单
+- index.json 表盘清单
+- wallpapers-online/full/ 原图（在线壁纸）
+- wallpapers-online/preview/ 预览图（在线壁纸）
+- index-online.json 在线壁纸清单
 
 直链说明：
 - GitHub Raw：https://raw.githubusercontent.com/<owner>/<repo>/main/
@@ -30,11 +33,19 @@
   - height: 原图高度
   - updated_at: 更新时间（ISO 8601）
 
-更新流程：
+更新流程（表盘）：
 1. 上传新图片到 `wallpapers/full/` 和 `wallpapers/preview/`
 2. 运行 `tools/generate-index.ps1` 生成/更新 `index.json`
 3. 推送到 GitHub，App 端按直链访问
 4. 若使用 jsDelivr，可在脚本中加 `-PurgeJsdelivr` 刷新缓存
+
+如果中国大陆访问较慢，可用 fastly 生成直链：
+- `tools/generate-index.ps1 -Owner <owner> -Repo <repo> -UseJsdelivr -JsdelivrHost fastly.jsdelivr.net`
+
+更新流程（在线壁纸）：
+1. 上传新图片到 `wallpapers-online/full/` 和 `wallpapers-online/preview/`
+2. 运行 `tools/generate-index.ps1 -ContentDir wallpapers-online -OutputPath index-online.json`
+3. 推送到 GitHub，App 端按直链访问
 
 只上传原图也可以：
 - 脚本会在 `wallpapers/preview/` 缺少同名文件时自动生成预览图

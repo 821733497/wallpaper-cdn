@@ -7,6 +7,7 @@
 - Repo: 仓库名
 - Branch: 分支名，默认 `main`
 - UseJsdelivr: 使用 jsDelivr 直链（不传则默认使用占位地址）
+- OutputPath: 输出清单文件名或路径，默认 `index.json`
 - PurgeJsdelivr: 生成后刷新 jsDelivr 缓存（需同时使用 `UseJsdelivr`）
 - PreviewMaxWidth: 预览图最大宽度，默认 800
 - PreviewMaxHeight: 预览图最大高度，默认 800
@@ -16,3 +17,4 @@
 说明：
 - 预览图建议与原图同名，脚本会标记缺失的预览图。
 - 如果未提供 Owner/Repo，URL 会保留占位符，方便后续替换。
+- 分开生成清单示例：将 `ContentDir` 指向不同目录，并用 `OutputPath` 指定不同的清单文件名。
