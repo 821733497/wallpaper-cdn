@@ -10,9 +10,9 @@
 - wallpapers-online/preview/ 预览图（在线壁纸）
 - index-online.json 在线壁纸清单
 
-直链说明：
-- GitHub Raw：https://raw.githubusercontent.com/<owner>/<repo>/main/
-- jsDelivr：https://cdn.jsdelivr.net/gh/<owner>/<repo>@main/
+直链说明（ref 可为分支 / tag / commit）：
+- GitHub Raw：https://raw.githubusercontent.com/<owner>/<repo>/<ref>/
+- jsDelivr：https://cdn.jsdelivr.net/gh/<owner>/<repo>@<ref>/
 
 例如：
 - 预览图：`wallpapers/preview/w-0001.jpg`
@@ -35,16 +35,30 @@
 
 更新流程（表盘）：
 1. 上传新图片到 `wallpapers/full/` 和 `wallpapers/preview/`
-2. 运行 `tools/generate-index.ps1` 生成/更新 `index.json`
+2. 运行 `tools/generate-index.ps1` 生成/更新 `index.json`（如需版本化直链可加 `-Ref <tag|commit>`）
 3. 推送到 GitHub，App 端按直链访问
-4. 若使用 jsDelivr，可在脚本中加 `-PurgeJsdelivr` 刷新缓存
+4. 若未版本化且使用 jsDelivr，可在脚本中加 `-PurgeJsdelivr` 刷新缓存
+
+版本化直链（推荐，避免 CDN 缓存刷新）：
+- 在脚本中指定 `-Ref <tag|commit>`，生成的 URL 会固定到该版本
+- 版本化后通常不需要 `-PurgeJsdelivr`
+
+Tag 发布流程（推荐）：
+1. 选择 tag（建议语义化版本，如 `v1.0.0`；首次可用 `v1.0.0`）
+2. 使用 `-Ref <tag>` 重新生成索引
+3. 提交索引与相关改动
+4. 创建并推送 tag，再推送分支
+
+下次 tag +1 规则：
+- 默认只递增 patch（例如 `v1.0.0` -> `v1.0.1`）
+- 如果有不兼容改动，再升级 minor/major
 
 如果中国大陆访问较慢，可用 fastly 生成直链：
-- `tools/generate-index.ps1 -Owner <owner> -Repo <repo> -UseJsdelivr -JsdelivrHost fastly.jsdelivr.net`
+- `tools/generate-index.ps1 -Owner <owner> -Repo <repo> -UseJsdelivr -JsdelivrHost fastly.jsdelivr.net -Ref <tag|commit>`
 
 更新流程（在线壁纸）：
 1. 上传新图片到 `wallpapers-online/full/` 和 `wallpapers-online/preview/`
-2. 运行 `tools/generate-index.ps1 -ContentDir wallpapers-online -Output index-online.json`
+2. 运行 `tools/generate-index.ps1 -ContentDir wallpapers-online -Output index-online.json`（如需版本化直链可加 `-Ref <tag|commit>`）
 3. 推送到 GitHub，App 端按直链访问
 
 只上传原图也可以：

@@ -2,6 +2,7 @@ param(
   [string]$Owner,
   [string]$Repo,
   [string]$Branch = "main",
+  [string]$Ref,
   [switch]$UseJsdelivr,
   [string]$JsdelivrHost = "cdn.jsdelivr.net",
   [string]$ContentDir = "wallpapers",
@@ -102,17 +103,18 @@ function Encode-UrlPath([string]$Path) {
 }
 
 function Get-BaseUrl {
-  param([string]$Owner, [string]$Repo, [string]$Branch, [switch]$UseJsdelivr, [string]$JsdelivrHost)
+  param([string]$Owner, [string]$Repo, [string]$Ref, [switch]$UseJsdelivr, [string]$JsdelivrHost)
   if ([string]::IsNullOrWhiteSpace($Owner) -or [string]::IsNullOrWhiteSpace($Repo)) {
-    return "https://cdn.jsdelivr.net/gh/<owner>/<repo>@$Branch/"
+    return "https://cdn.jsdelivr.net/gh/<owner>/<repo>@$Ref/"
   }
   if ($UseJsdelivr) {
-    return "https://$JsdelivrHost/gh/$Owner/$Repo@$Branch/"
+    return "https://$JsdelivrHost/gh/$Owner/$Repo@$Ref/"
   }
-  return "https://raw.githubusercontent.com/$Owner/$Repo/$Branch/"
+  return "https://raw.githubusercontent.com/$Owner/$Repo/$Ref/"
 }
 
-$baseUrl = Get-BaseUrl -Owner $Owner -Repo $Repo -Branch $Branch -UseJsdelivr:$UseJsdelivr -JsdelivrHost $JsdelivrHost
+$resolvedRef = if (-not [string]::IsNullOrWhiteSpace($Ref)) { $Ref } else { $Branch }
+$baseUrl = Get-BaseUrl -Owner $Owner -Repo $Repo -Ref $resolvedRef -UseJsdelivr:$UseJsdelivr -JsdelivrHost $JsdelivrHost
 
 $files = Get-ChildItem -Path $fullDir -File | Sort-Object Name
 $items = @()
@@ -170,7 +172,7 @@ if ($UseJsdelivr -and $PurgeJsdelivr -and -not [string]::IsNullOrWhiteSpace($Own
     $purgePath = $indexPath.Substring($root.Path.Length).TrimStart("\", "/")
   }
   $purgePath = $purgePath -replace "\\", "/"
-  $purgeUrl = "https://purge.jsdelivr.net/gh/$Owner/$Repo@$Branch/$purgePath"
+  $purgeUrl = "https://purge.jsdelivr.net/gh/$Owner/$Repo@$resolvedRef/$purgePath"
   try {
     Invoke-WebRequest -Uri $purgeUrl -Method Get -UseBasicParsing | Out-Null
     Write-Host "Purged jsDelivr cache: $purgeUrl"
